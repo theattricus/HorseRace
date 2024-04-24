@@ -71,11 +71,8 @@ public class Horse
 
     public void moveForward()
     {
-			if(fallen) return; // Fallen horses cannot move until reset.
-			double step = Math.random(); //range 0-1 
-			if(step<=horseConfidence) {
-				distanceTravelled++;
-			}
+			if(fallen) return; // Fallen horses should not move.
+			distanceTravelled++;
     }
 
     public void setConfidence(double newConfidence)
