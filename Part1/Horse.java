@@ -77,7 +77,7 @@ public class Horse
 
     public void setConfidence(double newConfidence)
     {
-			this.horseConfidence = Math.max(Math.min(horseConfidence, 1), 0); // Math.clamp in Java 21+
+			this.horseConfidence = Math.max(Math.min(newConfidence, 1), 0); // Math.clamp in Java 21+
     }
     
     public void setSymbol(char newSymbol)
