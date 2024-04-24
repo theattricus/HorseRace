@@ -93,6 +93,12 @@ public class Race
                 TimeUnit.MILLISECONDS.sleep(100);
             }catch(Exception e){}
         }
+				String winningName = "NONE";
+				if(raceWonBy(lane1Horse)) winningName = lane1Horse.getName();
+				else if(raceWonBy(lane2Horse)) winningName = lane2Horse.getName();
+				else if(raceWonBy(lane3Horse)) winningName = lane3Horse.getName();
+
+				System.out.println("Race won by "+winningName+'!');
     }
     
     /**

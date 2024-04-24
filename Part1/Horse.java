@@ -50,12 +50,12 @@ public class Horse
     
     public String getName()
     {
-       return this.horseName;
+       return horseName;
     }
     
     public char getSymbol()
     {
-       return !fallen ? this.horseSymbol : FALLEN_SYMBOL; // Preserve symbol for when the horse is reset.
+       return !fallen ? horseSymbol : FALLEN_SYMBOL; // Preserve symbol for when the horse is reset.
     }
     
     public void goBackToStart()
@@ -70,7 +70,7 @@ public class Horse
 
     public void moveForward()
     {
-			if(fallen) return;
+			if(fallen) return; // Fallen horses cannot move until reset.
 			double step = Math.random(); //range 0-1 
 			if(step<=horseConfidence) {
 				distanceTravelled++;
