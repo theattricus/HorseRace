@@ -7,7 +7,7 @@ public class Part1 {
 		Horse horse3 = new Horse('♘', "EL JEFE", 0.3);
 		race.addHorse(horse1, 1);
 		race.addHorse(horse2, 2);
-		race.addHorse(horse3, 3);
+		race.addHorse(horse3, 4);
 		race.startRace();
 	}	
 }
