@@ -1,5 +1,7 @@
 package horserace;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.Color;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
@@ -7,6 +9,10 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import java.util.HashMap;
+
+import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper;
+
 import java.util.ArrayList;
 import horserace.LaneObserver;
 public class LaneUI extends JPanel implements LaneObserver { // Could also use Swing timer for animation, however I like the observer pattern for this just in case movelane logic changes.
@@ -14,15 +20,49 @@ public class LaneUI extends JPanel implements LaneObserver { // Could also use S
 	private static Color SADDLE_COLOR = new Color(255,0,255); // Alpha = opaque, red=255, green=0, blue=255
 	private static Color GLASSES_COLOR = new Color(0,0,255); // Alpha = opaque, red=0, green=0, blue=255
 
+	private static HashMap<String, Color> colors = new HashMap<String, Color>();
+
 	private static BufferedImage finishline;
 	
 	private Lane lane;
-	LaneUI(Lane lane) { 
+	LaneUI(Lane lane, HorseManager hm) { 
+		colors.put("Gray", Color.GRAY);
+		colors.put("Red", Color.RED);
+		colors.put("Blue", Color.BLUE);
+		colors.put("Black", Color.BLACK);
 		try {
 			finishline = ImageIO.read(getClass().getClassLoader().getResource("images/finish.png"));
 		} catch(Exception e) {}
 		this.lane = lane;
 		lane.registerObserver(this);
+		
+		addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("Clicked!");
+				HashMap<String, Horse> horseNameMap = new HashMap<String, Horse>();
+				for(Horse horse : hm.getHorses().values()) {
+					horseNameMap.put(horse.getName(), horse);
+				}
+				LaneChooser chooser = new LaneChooser(colors, horseNameMap, (Color color, Horse horse) -> {
+					lane.setColor(color);
+					lane.setHorse(horse);
+				});
+				chooser.setVisible(true);
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+		});
 	}	
 	
 	private static BufferedImage deepCopy(BufferedImage bi) { //https://stackoverflow.com/questions/3514158/how-do-you-clone-a-bufferedimage

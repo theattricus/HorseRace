@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 public class LanesUI extends JPanel {
-	public LanesUI(Lanes lanes, int length) {
+	public LanesUI(Lanes lanes, int length, HorseManager horseManager) {
 		ArrayList<LaneUI> laneUIs = new ArrayList<LaneUI>();
 		for(Lane lane : lanes) {
-			laneUIs.add(new LaneUI(lane));
+			laneUIs.add(new LaneUI(lane, horseManager));
 		}
 		setLayout(new GridLayout(0, 1));
 		for (int i=0; i<laneUIs.size(); i++) {

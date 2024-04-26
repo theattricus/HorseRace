@@ -21,28 +21,10 @@ public class App {
 
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
-				JFrame f = new JFrame("hi");
-				HorseManager hm = new HorseManager("horses.txt");
-				// Horse horse = new Horse('a', "asdf", 0.1);
-				// Horse horse = hm.addHorse('a', "asdf", 0.1);
-				// Horse horse2 = hm.addHorse('b', "asd2", 1);
-				// Horse horse2 = new Horse('b', "asd2", 1);
-				// try{
-				// 	horse.setImage("images/horses/donner.png");
-				// 	horse.setSaddle("images/saddles/saddle.png");
-				// 	horse2.setImage("images/horses/tescomealdeal.png");
-				// 	horse2.setSaddle("images/saddles/greensaddle.png");
-				// }
-				// catch(Exception e) {
-				// 	System.exit(1);
-				// }
-				RaceManager rm = new RaceManager("races.txt");
-				hm.getHorses().forEach((k,v) -> {
-					rm.addHorse(v, k);
-				});
+				JFrame f = new JFrame("Click lane to change horse and color!");
 				// race.addHorse(horse, 1);
 				// race.addHorse(horse2, 2);
-				f.add(rm.getRace().getLanesUI());
+				f.add(new RaceChooser("horses.txt", "races.txt"));
 				f.pack();
 				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				f.setResizable(false);
@@ -51,7 +33,6 @@ public class App {
 				try{
 				TimeUnit.SECONDS.sleep(1);
 				} catch(Exception e) {};
-				rm.startRace();
 				
 			}
 

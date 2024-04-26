@@ -1,28 +1,55 @@
 package horserace;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 
-public class RaceChooser extends JFrame {
+import java.util.concurrent.TimeUnit;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JButton;
+
+import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+
+public class RaceChooser extends JPanel {
+	private HorseManager hm;
+	private RaceManager rm;
 	public RaceChooser(String horses, String races) {
-				HorseManager hm = new HorseManager("horses.txt");
-				// Horse horse = new Horse('a', "asdf", 0.1);
-				// Horse horse = hm.addHorse('a', "asdf", 0.1);
-				// Horse horse2 = hm.addHorse('b', "asd2", 1);
-				// Horse horse2 = new Horse('b', "asd2", 1);
-				// try{
-				// 	horse.setImage("images/horses/donner.png");
-				// 	horse.setSaddle("images/saddles/saddle.png");
-				// 	horse2.setImage("images/horses/tescomealdeal.png");
-				// 	horse2.setSaddle("images/saddles/greensaddle.png");
-				// }
-				// catch(Exception e) {
-				// 	System.exit(1);
-				// }
-				RaceManager rm = new RaceManager("races.txt");
-				hm.getHorses().forEach((k,v) -> {
-					rm.addHorse(v, k);
+		setLayout(new BorderLayout());
+		HorseManager hm = new HorseManager("horses.txt");
+		RaceManager rm = new RaceManager("races.txt");
+		rm.setHorseManager(hm);
+		rm.setLanes(hm.getHorses().size()+2);
+		hm.getHorses().forEach((k,v) -> {
+			rm.addHorse(v, k);
+		});
+		LanesUI lanesUI = rm.getRace().getLanesUI();
+		add(lanesUI, BorderLayout.CENTER);
+		JButton horseButton = new JButton("Create horse");
+		JButton startButton = new JButton("Start race");
+		horseButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				HorseCreator horseCreator = new HorseCreator((Character symbol, String name, double confidence, String path, String saddlePath) -> {
+					hm.addHorse(symbol, name, confidence, path, saddlePath);
 				});
-				// race.addHorse(horse, 1);
-				// race.addHorse(horse2, 2);
+				horseCreator.setVisible(true);
+			}
+		});
+		startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        rm.startRace();
+                        return null;
+                    }
+                }.execute();
+            }
+        });
+		add(horseButton, BorderLayout.NORTH);
+		add(startButton, BorderLayout.SOUTH);
 	}
 }

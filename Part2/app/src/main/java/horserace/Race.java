@@ -22,6 +22,8 @@ public class Race
 	private final ArrayList<RaceObserver> observers = new ArrayList<RaceObserver>();
 
 	private static Integer DEFAULT_LANES = 3;
+
+	private HorseManager horseManager;
 	
 	/**
 	* Constructor for objects of class Race
@@ -40,6 +42,8 @@ public class Race
 		raceLength = length;
 		setLanes(lanes.getCount());
 	}
+
+	public void setHorseManager(HorseManager horseManager) { this.horseManager = horseManager; }
 	
 	/**
 	* Call this before adding horses! Resets all lanes.
@@ -80,7 +84,7 @@ public class Race
 	}
 
 	public LanesUI getLanesUI() {
-		return new LanesUI(lanes, getLength());
+		return new LanesUI(lanes, getLength(), horseManager);
 	}
 	
 	/**
@@ -106,7 +110,6 @@ public class Race
 			horseSteps.put(lane.getHorse(), steps);
 			horseCount++;
 		}
-
 		
 		int fallenCount = 0;
 		while (!finished)

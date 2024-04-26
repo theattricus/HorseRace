@@ -55,6 +55,7 @@ public class RaceManager implements RaceObserver {
 	public void startRace() { race.startRace(); }
 
 	public void setLanes(int count) { race.setLanes(count); }
+	public void setHorseManager(HorseManager hm) { race.setHorseManager(hm); }
 
 	public void addHorse(Horse horse, int lane) { race.addHorse(horse, lane); }
 

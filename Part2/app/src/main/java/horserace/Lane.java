@@ -25,7 +25,7 @@ public class Lane {
 	public int getLength() { return length; }
 	
 	public Color getColor() { return color; }
-	public void setColor(Color color) { this.color = color; }
+	public void setColor(Color color) { this.color = color; notifyObservers();}
 
 	/**
 	 * Gets horse field.
@@ -79,6 +79,7 @@ public class Lane {
 	 */
 	public void setHorse(Horse horse) {
 		this.horse = horse;
+		notifyObservers();
 	}
 
 	/***
