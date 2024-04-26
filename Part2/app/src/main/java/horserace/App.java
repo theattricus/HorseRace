@@ -21,7 +21,7 @@ public class App {
 
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
-				JFrame f = new JFrame("Click lane to change horse and color!");
+				JFrame f = new JFrame("Click lane to change horse and color, start race also restarts race!");
 				// race.addHorse(horse, 1);
 				// race.addHorse(horse2, 2);
 				f.add(new RaceChooser("horses.txt", "races.txt"));
