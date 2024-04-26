@@ -21,7 +21,7 @@ public class RaceResult implements Serializable {
 		this.length = length;
 	}
 	
-	public Map<Integer, Integer> getWinners() {
+	public Map<Integer, Integer> getWinners() { // ID=steps
 		return winners;
 	}
 	
@@ -49,6 +49,7 @@ public class RaceResult implements Serializable {
 		Matcher matcher = pattern.matcher(input);
 		if (matcher.find()) {
 			String matchedGroup = matcher.group(1);
+			if(matchedGroup.length()==0) return map;
 			String[] entries = matchedGroup.split(", ");
 			for (String entry : entries) {
 				String[] keyValue = entry.split("=");
@@ -67,6 +68,7 @@ public class RaceResult implements Serializable {
 		
 		if (matcher.find()) {
 			String matchedGroup = matcher.group(1);
+			if(matchedGroup.length()==0) return list;
 			String[] items = matchedGroup.split(", ");
 			for (String item : items) {
 				list.add(Integer.parseInt(item.trim()));
