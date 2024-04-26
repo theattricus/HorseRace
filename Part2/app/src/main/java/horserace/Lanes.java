@@ -1,3 +1,4 @@
+package horserace;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -30,6 +31,10 @@ public class Lanes implements Iterable<Lane> { // Number of lanes immutable. Cre
 	}
 	public int getCount() {
 		return lanes.size();
+	}
+
+	public Lane get(int i) {
+		return lanes.get(i);
 	}
 
 	public Horse getHorse(int laneNumber) throws IndexOutOfBoundsException {

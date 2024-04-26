@@ -1,8 +1,11 @@
+package horserace;
 import java.util.concurrent.TimeUnit;
 import java.lang.Math;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
 * A three-horse race, each horse running in its own lane
@@ -15,6 +18,8 @@ public class Race
 {
 	private int raceLength;
 	private Lanes lanes;
+
+	private final ArrayList<RaceObserver> observers = new ArrayList<RaceObserver>();
 
 	private static Integer DEFAULT_LANES = 3;
 	
@@ -30,6 +35,11 @@ public class Race
 		raceLength = distance;
 		lanes = new Lanes(DEFAULT_LANES, raceLength);
 	}
+
+	public void setLength(int length) {
+		raceLength = length;
+		setLanes(lanes.getCount());
+	}
 	
 	/**
 	* Call this before adding horses! Resets all lanes.
@@ -38,6 +48,24 @@ public class Race
 	public void setLanes(int count) {
 		lanes = new Lanes(count, raceLength, this.lanes);
 	}
+
+	public Lanes getLanes() { return lanes; }
+
+	public void registerObserver(RaceObserver observer) {
+		observers.add(observer);
+	}
+
+	public void removeObserver(RaceObserver observer) {
+		observers.remove(observer);
+	}
+
+	public void notifyObservers(RaceResult result) {
+		for(RaceObserver observer : observers)
+			observer.raceObserverUpdate(result);
+	}
+
+	public int getLength() { return raceLength; }
+
 	
 	/**
 	* Adds a horse to the race in a given lane
@@ -49,6 +77,10 @@ public class Race
 	{
 		laneNumber--; // convert 1-indexed number to 0-indexed.
 		lanes.setHorse(theHorse, laneNumber);
+	}
+
+	public LanesUI getLanesUI() {
+		return new LanesUI(lanes, getLength());
 	}
 	
 	/**
@@ -64,13 +96,17 @@ public class Race
 		int horseCount = 0;
 		//reset all the lanes (all horses not fallen and back to 0) and count how many horses.
 		Iterator<Lane> used_lanes = lanes.used_lanes();
+		int steps = 0;
+		ArrayList<Horse> finishedHorses = new ArrayList<Horse>();
+		HashMap<Horse, Integer> horseSteps = new HashMap<Horse, Integer>();
+		HashSet<Horse> fallenHorses = new HashSet<Horse>();
 		while(used_lanes.hasNext()) {
 			Lane lane = used_lanes.next();
 			lane.getHorse().goBackToStart();
+			horseSteps.put(lane.getHorse(), steps);
 			horseCount++;
 		}
-		
-		ArrayList<Horse> finishedHorses = new ArrayList<Horse>();
+
 		
 		int fallenCount = 0;
 		while (!finished)
@@ -81,12 +117,15 @@ public class Race
 			while(used_lanes.hasNext()) {
 				Lane lane = used_lanes.next();
 				Horse horse = lane.getHorse();
-				moveHorse(horse);
+				if (moveLane(lane)) horseSteps.put(horse, steps);
 				if(raceWonBy(horse)) {
 					finishedHorses.add(horse);
 					finished = true;
 				}
-				if(horse.hasFallen()) fallenCount++;
+				if(horse.hasFallen()) {
+					fallenCount++;
+					fallenHorses.add(horse);	
+				};
 			}
 			if(fallenCount==horseCount) finished=true;
 			//print the race positions
@@ -96,6 +135,7 @@ public class Race
 			try{ 
 				TimeUnit.MILLISECONDS.sleep(100);
 			}catch(Exception e){}
+			steps++;
 		}
 		if(finishedHorses.size()>0) {
 			ArrayList<String> names = new ArrayList<String>();
@@ -105,7 +145,28 @@ public class Race
 		} else if(fallenCount==horseCount) {
 			System.out.println("All horses fell!");
 		}
+		HashMap<Integer, Integer> won = new HashMap<Integer, Integer>();
+		for(Horse horse : finishedHorses) {
+			won.put(horse.getId(), horseSteps.get(horse));
+		}
+		ArrayList<Integer> fallenIds = new ArrayList<Integer>();
+		ArrayList<Integer> lost = new ArrayList<Integer>();
 		
+		used_lanes = lanes.used_lanes();
+		while(used_lanes.hasNext()) {
+			Lane lane = used_lanes.next();
+			Horse horse = lane.getHorse();
+			if(!finishedHorses.contains(horse)) {
+				lost.add(horse.getId());
+			}
+			if(fallenHorses.contains(horse)) {
+				fallenIds.add(horse.getId());
+			}
+		}
+		notifyObservers(new RaceResult(won, lost, fallenIds, raceLength));
+	}
+	private boolean moveLane(Lane lane) {
+		return lane.moveHorse();
 	}
 	
 	/**

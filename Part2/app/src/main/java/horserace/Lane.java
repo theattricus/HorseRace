@@ -1,8 +1,16 @@
+package horserace;
+import java.awt.Color;
+import java.util.ArrayList;
 public class Lane {
+	//Default members/config.
+	private static Character EMPTY_TRACK = ' ';
 	//Fields
 	private Horse horse;
 	private Integer length;
-	private static Character EMPTY_TRACK = ' ';
+	
+	private Color color = Color.GRAY;
+
+	private final ArrayList<LaneObserver> observers = new ArrayList<LaneObserver>();
 
 	/**
 	 * Constructor for Lane object, taking horse and length.
@@ -14,12 +22,55 @@ public class Lane {
 		this.length = length;
 	};
 
+	public int getLength() { return length; }
+	
+	public Color getColor() { return color; }
+	public void setColor(Color color) { this.color = color; }
+
 	/**
 	 * Gets horse field.
 	 * @return the horse.
 	 */
 	public Horse getHorse() {
 		return horse;
+	}
+
+	public void registerObserver(LaneUI laneUI) {
+		observers.add(laneUI);
+	}
+
+	public void removeObserver(LaneUI laneUI) {
+		observers.remove(laneUI);
+	}
+
+	public void notifyObservers() {
+		for(LaneObserver observer : observers)
+			observer.laneObserverUpdate();
+	}
+
+	public boolean moveHorse() {
+		if(horse==null) return false;
+		boolean result = false;
+		if  (!horse.hasFallen())
+		{
+			//the probability that the horse will move forward depends on the confidence;
+			if (Math.random() < horse.getConfidence())
+			{
+				horse.moveForward();
+				result = true;
+			}
+			
+			//the probability that the horse will fall is very small (max is 0.1)
+			//but will also will depends exponentially on confidence 
+			//so if you double the confidence, the probability that it will fall is *2
+			if (Math.random() < (0.1*horse.getConfidence()*horse.getConfidence()))
+			{
+				horse.fall();
+				result = false;
+			}
+		}
+		notifyObservers();
+		return result;
 	}
 
 	/**
